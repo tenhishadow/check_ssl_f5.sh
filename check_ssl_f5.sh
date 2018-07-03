@@ -68,10 +68,8 @@ do
   if [[ $i =~ ssl-cert  ]]                              # additional regex check of input
     then
       # get ssl filename
-      #SSL_CRT=$( echo $i | $GREP 'ssl-cert' | $AWK '{ print $4 }' )
       SSL_CRT=$( echo $i | $AWK '/ssl-cert/' | $AWK '{ print $4 }' )
       # get ssl expiration date
-      #SSL_EXP=$( echo $i | $GREP 'expiration-string' | $AWK -F 'expiration-string' '{ print $2 }'  ) && SSL_EXP=${SSL_EXP:2:-1}
       SSL_EXP=$( echo $i | $AWK '/expiration-string/' | $AWK '{ gsub("\"","@@",$0); print $0 }' | $AWK -F'[@@|@@]' '{ print $3 }' )
   fi
 
@@ -84,8 +82,6 @@ do
   fi
 
   # validating date
-#  echo $SSL_EXP
-#  echo $SSL_CRT
   $DATE "+%Y%m%d" -d "$SSL_EXP">/dev/null 2>/dev/null
   if [[ !( $? == 0 )  ]]
     then
